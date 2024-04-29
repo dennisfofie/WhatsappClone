@@ -1,0 +1,15 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 16px;
+}
+
+:root {
+    --background-primary-color: #25D366;
+    --background-secondary-color: #075E54;
+    --background-chat-color: #ECE5DD;
+    --background-icon-color: #128C7E;
+    --background-color: #DCF8C6;
+}
