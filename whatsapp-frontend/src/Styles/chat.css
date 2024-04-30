@@ -1,6 +1,4 @@
-img {
-    border-radius: 50%;
-}
+
 
 .nav-container {
     display: flex;
@@ -24,10 +22,14 @@ img {
     margin-left: 1.2rem;
 }
 
-.online-component span {
+.online-one span {
+    color: red;
+}
+
+/* .online-component span {
     color: black;
     display: block;
-}
+} */
 
 
 .online-one , .online-two{
@@ -51,7 +53,7 @@ img {
     height: 80vh;
     display: flex;
     flex-direction: column;
-
+overflow: scroll;
 }
 
 .encryption-container {
@@ -111,7 +113,7 @@ img {
 
 .chatting-area, .chatting-area-to {
     background-color: #DCF8C6;
-    width: 30%;
+    width: 215px;
     padding: 0.5rem;
     margin-left: 2rem;
     margin-bottom: 1rem;
@@ -119,6 +121,13 @@ img {
     font-size: 2rem;
     border-radius: 1rem;
     position: relative;
+    img{
+        border-radius: 0.4rem;
+        object-fit: cover;
+    }
+    p{
+        word-wrap: break-word;
+    }
 }
 
 .chatting-area h6 ,.chatting-area-to h6{
@@ -201,13 +210,11 @@ img {
     font-size: 1.2rem;
     font-weight: 400;
     margin-right: 2rem;
-    box-shadow: 0 -1px 3px rgba(85, 84, 84, 2);
 }
 
 .select-page {
     display: flex;
     align-items: center;
-    background-color: red;
     width: 100%;
     justify-content: center;
 
@@ -222,13 +229,7 @@ img {
     background-color: azure;
 }
 
-.select-page .first {
-    background-color: var(--background-primary-color);
-}
 
-.select-page .first:hover {
-    background-color: azure;
-}
 
 .select-page button:hover {
     background-color: var(--background-primary-color);
@@ -236,55 +237,97 @@ img {
 
 .person-area {
     width: 100%;
-    background-color: whitesmoke;
-    height: max-content;
+    background-color: var(--background-chat-color);
+    height: 70vh;
+    position: relative;
 }
 
 .chat-element, .chat-element-one {
     display: flex;
-    align-items: center;
     width: 100%;
-    column-gap: 5px;
-    margin-left: 1rem;
+    align-items: center;
+    gap:1rem;
+    padding:12px;
+    
 }
-
+.chat-image{
+    height: 100%;
+    border-radius: 100%;
+}
 .chat-display {
-    display: grid;
-    grid-template-columns: 4fr 1fr;
+    display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    width: 100%;
 }
 
-.name-message, .time-check {
-    width: 100%;
+.chat-display h5 {
+    margin:0
+}
+.name-message{
+    flex:1
 }
 
 .name-message h5 {
-    margin-top: 1.5rem;
     width: 100%;
 }
 
 .name-message p {
     margin-top: 0.6rem;
 }
-
-.time-check p, .time-check h6 {
+ .time-check h6, .time-check p {
     margin-top: 1rem;
     font-size: 0.8rem;
     margin-top: 0.6rem;
     vertical-align: center;
+    color: 	#4FB6EC;
 }
 
 .noti {
     background-color: var(--background-primary-color);
-    width: 25px;
-    padding: 0.3rem;
-    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+         display: flex;
+  align-items: center;
+  justify-content: center;
     border: none;
-    text-align: center;
     outline: none;
+        margin: 0;
+    }
+
+
+
+.chat-icon {
+    /* color: var(--background-primary-color); */
+    background-color: var(--background-primary-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    
+}
+.time-check{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+.time-check span {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: 	#4FB6EC;
 }
 
-.chat {
-    color: var(--background-primary-color);
+.time-check p {
+    color: black;
+}
+
+.name-message {
+    width: 100%;
 }

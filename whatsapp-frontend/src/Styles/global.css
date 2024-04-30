@@ -13,3 +13,8 @@
     --background-icon-color: #128C7E;
     --background-color: #DCF8C6;
 }
+
+.App{
+    overflow: hidden;
+
+}
