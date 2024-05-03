@@ -26,6 +26,7 @@
     color: red;
 }
 
+
 /* .online-component span {
     color: black;
     display: block;
@@ -330,4 +331,8 @@ overflow: scroll;
 
 .name-message {
     width: 100%;
+}
+
+.online-two .notification {
+    color: yellow;
 }
