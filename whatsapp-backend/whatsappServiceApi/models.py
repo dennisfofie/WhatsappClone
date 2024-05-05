@@ -16,9 +16,11 @@ class UserStatus(Enum):
 
 
 # Create your models here.
-class User(models.Model):
-    userId = models.UUIDField(max_length=50, primary_key=True, default=uuid4)
+class User(AbstractUser):
     email = models.EmailField(max_length=100, null=False, blank=False, unique=True)
+    username = models.CharField(
+        null=True, blank=True, max_length=100
+    )
     fullName = models.CharField(max_length=100, blank=False, null=False)
     password = models.CharField(max_length=100, blank=False, null=False)
     status = models.CharField(max_length=50, choices=[(status.name, status.value) for status in UserStatus], default='offline')
@@ -28,10 +30,11 @@ class User(models.Model):
     modified = models.DateTimeField(auto_now=True)
     createdBy = models.CharField(max_length=100, blank=False, null=False)
     modifiedBy = models.CharField(max_length=100, blank=False, null=False)
-    
 
-    class Meta:
-        ordering=['userId']
+    REQUIRED_FIELDS= ['password', 'fullName']
+
+    USERNAME_FIELD = 'email'
+    
 
     def __str__(self):
         return self.email

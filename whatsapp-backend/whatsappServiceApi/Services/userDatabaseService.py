@@ -11,16 +11,16 @@ class UserDatabaseService:
     def CreateUser(self, model:User):
         return self.repo.CreateUser(modelInstance=model)
     
-    def GetUser(self, userId:User.userId):
+    def GetUser(self, userId:User.id):
         return self.repo.GetUser(userId=userId)
     
     def GetAllUser(self, searchTerm):
         return self.repo.GetAllUsers(searchTerm=searchTerm)
     
-    def Activate(self, user:User.userId):
+    def Activate(self, user:User.id):
         return self.repo.ActivateUser(userId=user)
     
-    def Deactivate(self, user:User.userId):
+    def Deactivate(self, user:User.id):
         return self.repo.DeactivateUser(userId=user)
     
     def ChangePic(self, user, model):
@@ -32,3 +32,5 @@ class UserDatabaseService:
     def ResetPassword(self, user:User, reset:ResetPassword):
         return self.repo.ResetPassword(user, reset)
     
+    def GetUserByEmail(self, email):
+        return self.repo.GetUserByEmail(email)

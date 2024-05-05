@@ -46,26 +46,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        'rest_framework.permissions.AllowAny'
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     "DEFAULT_PAGINATION_CLASS":
         'rest_framework.pagination.PageNumberPagination',
         'PAGE_SIZE': 5,
-    'USER_ID_CLAIM': 'userId',
 }
 
 #tokens specification
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=5),
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "USER_ID_FIELD": "userId",
-    "USER_ID_CLAIM": "user_userId",
-
 }
 
-from rest_framework.settings import api_settings
-print(api_settings)
+AUTH_USER_MODEL = 'whatsappServiceApi.User'

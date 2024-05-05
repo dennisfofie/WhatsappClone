@@ -33,7 +33,7 @@ class UserRepository:
             return "The userId must be specified and not None"
         
         context = self.__getModel__(self.USER_MODEL)
-        record = context.objects.get(userId=userId)
+        record = context.objects.get(pk=userId)
 
         if record is None:
             return None
@@ -49,8 +49,7 @@ class UserRepository:
         else:
             records = context.objects.filter(
                 Q(email__icontains=searchTerm)|
-                Q(fullName__icontains=searchTerm)|
-                Q(userId__icontains=searchTerm)
+                Q(fullName__icontains=searchTerm)
             )
         
         if records is None:
@@ -64,7 +63,7 @@ class UserRepository:
         
         context = self.__getModel__(self.USER_MODEL)
 
-        record = context.objects.get(userId=userId)
+        record = context.objects.get(pk=userId)
 
         if record is None:
             return None
@@ -81,7 +80,7 @@ class UserRepository:
         
         context = self.__getModel__(self.USER_MODEL)
 
-        record = context.objects.get(userId=userId)
+        record = context.objects.get(pk=userId)
 
         if record is None:
             return None
@@ -101,12 +100,12 @@ class UserRepository:
         if not isinstance(modelInstance, self.USER_MODEL):
             return "The model must be instance of user"
         
-        record = context.objects.get(userId=userId)
+        record = context.objects.get(pk=userId)
 
         if record is None:
             return record
         
-        record.profilePic = modelInstance.profilePic
+        record.profilePic = modelInstance
         record.modified = datetime.now(timezone.utc)
         record.save()
 
@@ -121,7 +120,7 @@ class UserRepository:
         if not isinstance(modelInstance, self.USER_MODEL):
             return "The model must be instance of user"
         
-        record = context.objects.get(userId=userId)
+        record = context.objects.get(pk=userId)
 
         if record is None:
             return None
@@ -159,6 +158,18 @@ class UserRepository:
         
         return "User password has been updated successfully"
 
+    def GetUserByEmail(self, email):
+        if email is None:
+            return None
+        
+        context = self.__getModel__(self.USER_MODEL)
+
+        record = context.objects.get(email = email)
+
+        if record is None:
+            return None
+        
+        return record
 
 
     def __getModel__(self, model = ''):
