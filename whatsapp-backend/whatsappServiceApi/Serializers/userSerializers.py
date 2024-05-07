@@ -22,8 +22,12 @@ class ProfilePicSerializer(serializers.ModelSerializer):
         model = User
         fields = ['profilePic']
 
+        read_only_fields = ['profile', 'fullName']
+
+
 class ResetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ResetPassword
-        fields = ['user']
+        fields = ['oldPassword', 'newPassword', 'confirmPassword']
+

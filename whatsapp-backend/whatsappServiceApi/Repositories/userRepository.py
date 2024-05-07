@@ -125,9 +125,9 @@ class UserRepository:
         if record is None:
             return None
         
-        if (modelInstance.email != None or modelInstance.fullName != None):
-            record.modified = datetime.now(timezone.utc)
-            record.save()
+        record.fullName = modelInstance.fullName
+        record.profilePic = modelInstance.profilePic
+        record.save()
 
         return record
     

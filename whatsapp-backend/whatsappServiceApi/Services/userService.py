@@ -4,7 +4,7 @@ from whatsappServiceApi.Services.userDatabaseService import UserDatabaseService
 from whatsappServiceApi.Serializers.userSerializers import (
     RegistrationSerializer,
     LoginSerializer,
-    ResetPassword,
+    ResetSerializer,
     ProfilePicSerializer
 )
 
@@ -28,8 +28,8 @@ from django.contrib.auth import login
 
 class UserApplicationService(viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
-    authentication_classes=[JWTAuthentication]
-    permission_classes=[IsAuthenticated]
+    # authentication_classes=[JWTAuthentication]
+    # permission_classes=[IsAuthenticated]
     lookup_url_kwarg='userid'
     userDb = None
     serializer_class = RegistrationSerializer
@@ -152,7 +152,6 @@ class UserApplicationService(viewsets.GenericViewSet):
         )
     
     def retrieve(self, request, userid=None):
-
         if userid is None:
             message = {
                 "Error": "userId must be specified"
@@ -188,7 +187,8 @@ class UserApplicationService(viewsets.GenericViewSet):
             methods=['put'],
             detail=True,
             url_path='update-pic',
-            serializer_class=ProfilePicSerializer
+            serializer_class=ProfilePicSerializer,
+            permission_classes = [AllowAny]
     )
     def update_profilePicture(self, request, userid=None):
         
@@ -215,7 +215,7 @@ class UserApplicationService(viewsets.GenericViewSet):
                 status.HTTP_400_BAD_REQUEST
             )
         
-        result = self.userDb.ChangePic(user.userId, profilePic)
+        result = self.userDb.ChangePic(user.id, profilePic)
 
         if result is None:
             message = {
@@ -284,23 +284,10 @@ class UserApplicationService(viewsets.GenericViewSet):
             status.HTTP_200_OK
         )
     
-    @action(
-            methods=['put'],
-            detail=True,
-            url_path="profile",
-            serializer_class=RegistrationSerializer
-    )
-    def update_profile(self, request, userid):
-        email = request.data.get("email")
 
-        fullname = request.data.get("fullname")
-
-        if fullname is None or fullname == "":
-            return self.__createResponse(
-                "Name is not specified",
-                status.HTTP_400_BAD_REQUEST
-            )
-        
+    def update(self, request, userid):
+        print(f"request: {request.data}")
+     
         if userid is None:
             message = {
                 "Error": "Userid must be specified"
@@ -309,24 +296,33 @@ class UserApplicationService(viewsets.GenericViewSet):
                 message,
                 status.HTTP_400_BAD_REQUEST
             )
-        
-        user = User(email = email , fullname=fullname)
 
-        result = self.userDb.UpdateUserInfo(userid, user)
+        result = User.objects.get(id=userid)
+        print(f"result: {result}")
 
         if result is None:
             message = {
-                "Error": "Failed to update user profile info"
+                "Error": "User with specified id not found"
             }
 
-        serializer = self.serializer_class(
-            result, many=False, partial=True
+        serializer = ProfilePicSerializer(instance=result,
+            data=request.data, many=False, partial=True
         )
 
-        return self.__createResponse(
-            serializer.data,
-            status.HTTP_201_CREATED
-        )
+        print(f"serializer: {serializer}")
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+            return self.__createResponse(
+                serializer.data,
+                status.HTTP_201_CREATED
+            )
+        else:
+            return self.__createResponse(
+                serializer.errors,
+                status.HTTP_400_BAD_REQUEST
+            )
     
     @action(
             methods=['post'],
@@ -398,6 +394,58 @@ class UserApplicationService(viewsets.GenericViewSet):
             response,
             status.HTTP_200_OK
         )
+    
+
+    @action(
+            methods=['put'],
+            detail=True,
+            url_path='reset',
+            serializer_class=ResetSerializer
+    )
+    def reset_password(self, request, userid=None):
+        if userid is None:
+            message = {'Error': 'User with userId not found'}
+            return self.__createResponse(message, status.HTTP_400_BAD_REQUEST)
+        
+        user = self.userDb.GetUser(userid)
+
+        if user is None:
+            message = {'Error': 'User with userId not found'}
+            return self.__createResponse(message, status.HTTP_400_BAD_REQUEST)
+        
+        oldPassword = request.data.get("oldPassword")
+        newPassword = request.data.get("newPassword")
+        confirmPassword = request.data.get("confirmPassword")
+
+
+        print(check_password(oldPassword, user.password))
+        reset = None
+
+        if check_password(oldPassword, user.password):
+            if (newPassword == confirmPassword):
+                reset = self.userDb.ResetPassword(
+            resetUser = user,
+            oldPassword = oldPassword,
+            newPassword = newPassword,
+            confirmPassword = confirmPassword,
+        )
+
+        if reset is not None:
+            message = {"Error": "Failed to reset password"}
+            self.__createResponse(
+                message,
+                status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = self.serializer_class(reset, many=False)
+
+        return self.__createResponse(
+            serializer.data,
+            status.HTTP_200_OK
+        )
+                
+        
+
             
 
 

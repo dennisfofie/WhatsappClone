@@ -31,8 +31,7 @@ class User(AbstractUser):
     createdBy = models.CharField(max_length=100, blank=False, null=False)
     modifiedBy = models.CharField(max_length=100, blank=False, null=False)
 
-    REQUIRED_FIELDS= ['password', 'fullName']
-
+    REQUIRED_FIELDS= ['password']
     USERNAME_FIELD = 'email'
     
 
@@ -55,8 +54,10 @@ class Message(models.Model):
     toUser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
     fromUser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     chats = models.TextField(max_length=1024, null=True, blank=True)
-    taggedUser = models.ForeignKey(Tag, on_delete=models.CASCADE)
     audio = models.FileField(null=True, blank=True)
+    image = models.ImageField(
+        null=True, blank=True
+    )
     status = models.CharField(max_length=10, choices=[(status.name , status.value) for status in MessageStatus] )
     createdBy = models.CharField(max_length=100, null=False, blank=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -70,9 +71,11 @@ class Message(models.Model):
 class Room(models.Model):
     roomId = models.BigAutoField(primary_key=True, null=False, blank=False)
     roomName = models.CharField(max_length=100, null=False, blank=False)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='group_admin')
+    icon = models.ImageField(null=True, blank=False)
     users = models.ManyToManyField(to=User)
     created = models.DateTimeField(auto_now_add=True)
-    modified = models.DateTimeField(auto_now=True)
+    modified = models.DateTimeField(auto_now=True),
     modifiedBy = models.CharField(max_length=100, null=False, blank=True)
 
     def __str__(self):
