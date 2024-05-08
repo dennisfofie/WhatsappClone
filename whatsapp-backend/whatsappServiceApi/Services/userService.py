@@ -20,16 +20,13 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-import jwt
-from django.conf import settings
 import json
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth import login
 
 class UserApplicationService(viewsets.GenericViewSet):
     pagination_class = StandardResultsSetPagination
-    # authentication_classes=[JWTAuthentication]
-    # permission_classes=[IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    permission_classes=[IsAuthenticated]
     lookup_url_kwarg='userid'
     userDb = None
     serializer_class = RegistrationSerializer
@@ -84,6 +81,7 @@ class UserApplicationService(viewsets.GenericViewSet):
             )
 
             result = self.userDb.CreateUser(user)
+            print(result)
 
             if result is None:
                 message = {"Error": "Error occurred while creating user"}
@@ -400,7 +398,8 @@ class UserApplicationService(viewsets.GenericViewSet):
             methods=['put'],
             detail=True,
             url_path='reset',
-            serializer_class=ResetSerializer
+            serializer_class=ResetSerializer,
+            permission_classes=[AllowAny]
     )
     def reset_password(self, request, userid=None):
         if userid is None:
@@ -417,30 +416,64 @@ class UserApplicationService(viewsets.GenericViewSet):
         newPassword = request.data.get("newPassword")
         confirmPassword = request.data.get("confirmPassword")
 
+        if oldPassword is None or oldPassword is "":
+            message = {"Error": "Old password cannot be None"}
+            return self.__createResponse(
+                message,
+                status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not newPassword or not confirmPassword:
+            message = {"Error": "New password must be provided"}
+            return self.__createResponse(
+                message,
+                status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not (newPassword == confirmPassword):
+            message = {"Error": "New and Confirm password must be equal"}
+            return self.__createResponse(
+                message,
+                status.HTTP_400_BAD_REQUEST
+            )
+        
+        if (len(newPassword) < 8 or not (newPassword.isalnum()) or 
+            not (confirmPassword.isalnum())):
+            message = {"Error": "Password must be alpha numeric"}
+            return self.__createResponse(
+                message,
+                status.HTTP_400_BAD_REQUEST
+            )
 
-        print(check_password(oldPassword, user.password))
-        reset = None
-
-        if check_password(oldPassword, user.password):
-            if (newPassword == confirmPassword):
-                reset = self.userDb.ResetPassword(
+        reset = ResetPassword(
             resetUser = user,
             oldPassword = oldPassword,
             newPassword = newPassword,
-            confirmPassword = confirmPassword,
-        )
+            confirmPassword = confirmPassword
+                )
 
-        if reset is not None:
+        if reset is None:
             message = {"Error": "Failed to reset password"}
             self.__createResponse(
                 message,
                 status.HTTP_400_BAD_REQUEST
             )
 
-        serializer = self.serializer_class(reset, many=False)
+        if check_password(oldPassword, user.password):
+            if (newPassword != confirmPassword):
+                return self.__createResponse(
+                    {"Error": "Incorrect password"},
+                    status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                self.userDb.ResetPassword(user, reset)
+                user.password = make_password(newPassword)
+                user.save()
+
+        message = {"sucess": "User password updated sucessfully"}
 
         return self.__createResponse(
-            serializer.data,
+            message,
             status.HTTP_200_OK
         )
                 

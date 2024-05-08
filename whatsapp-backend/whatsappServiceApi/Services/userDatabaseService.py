@@ -29,7 +29,7 @@ class UserDatabaseService:
     def UpdateUserInfo(self, user, model):
         return self.repo.UpdateUserProfile(user, model)
     
-    def ResetPassword(self, user:User, reset:ResetPassword):
+    def ResetPassword(self, user, reset):
         return self.repo.ResetPassword(user, reset)
     
     def GetUserByEmail(self, email):

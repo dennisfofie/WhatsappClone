@@ -40,7 +40,7 @@ ASGI_APPLICATION = PROJECT_NAME +'.asgi.application'
 ROOT_URLCONF = PROJECT_NAME + '.urls'
 
 #allowed host
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -66,4 +66,13 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+#user model for authentication
 AUTH_USER_MODEL = 'whatsappServiceApi.User'
+
+#channel_layer
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

@@ -22,6 +22,7 @@ class UserRepository:
             createdBy = 'user.service',
             modifiedBy = 'user.service'
         )
+        print(context)
 
         if context is None:
             return None
@@ -132,15 +133,10 @@ class UserRepository:
         return record
     
     def ResetPassword(self, modelInstance, resetModel):
-        if modelInstance.userId is None:
+        if modelInstance.id is None:
             return None
 
         resetContext = self.__getModel__(self.RESET_PASSWORD)
-
-        if (modelInstance.password == resetModel.oldPassword and resetModel.newPassword == resetModel.confirmPassword):
-            modelInstance.password = resetModel.newPassword
-            modelInstance.modified = datetime.now(timezone.utc)
-            modelInstance.save()
         
         reset = resetContext.objects.create(
             resetUser = modelInstance,
@@ -150,7 +146,6 @@ class UserRepository:
             created = datetime.now(timezone.utc),
             modified = datetime.now(timezone.utc),
             modifiedBy = 'user.service',
-            createdBy = 'user.service'
         )
 
         if reset is None:
